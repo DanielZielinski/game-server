@@ -1,4 +1,4 @@
-package daniel.zielinski.websocketserver;
+package daniel.zielinski.websocketserver.session.infrstructure.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
@@ -13,7 +13,6 @@ import java.util.List;
 public class WebSocketSessionManager {
 
     private final List<WebSocketSession> sessions = new ArrayList<>();
-
 
     public void addSession(WebSocketSession session) {
         sessions.add(session);

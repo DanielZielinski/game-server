@@ -1,7 +1,12 @@
 package daniel.zielinski.websocketserver;
 
-import daniel.zielinski.websocketserver.command.domain.WebSocketCommandExecutorFactory;
-import daniel.zielinski.websocketserver.command.domain.WebSocketCommandType;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import daniel.zielinski.websocketserver.message.domain.WebsocketMessageReader;
+import daniel.zielinski.websocketserver.shared.model.input.WebSocketInputCommand;
+import daniel.zielinski.websocketserver.command_router.domain.WebSocketInputCommandRouter;
+import daniel.zielinski.websocketserver.shared.model.input.WebSocketInputCommandType;
+import daniel.zielinski.websocketserver.session.infrstructure.service.WebSocketSessionManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.CloseStatus;
@@ -14,13 +19,13 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 public class WebSocketMessageHandler extends TextWebSocketHandler {
 
     private final WebSocketSessionManager webSocketSessionManager;
-    private final WebSocketCommandExecutorFactory webSocketCommandExecutorFactory;
+    private final WebSocketInputCommandRouter webSocketInputCommandRouter;
+    private final WebsocketMessageReader websocketMessageReader;
 
     @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) {
-        String[] commandSplitted = message.getPayload().split("\\|");
-        WebSocketCommandType webSocketCommandType = WebSocketCommandType.fromType(commandSplitted[0]);
-        webSocketCommandExecutorFactory.execute(webSocketCommandType, commandSplitted, session);
+    public void handleTextMessage(WebSocketSession session, TextMessage message){
+        WebSocketInputCommand webSocketInputCommand = websocketMessageReader.read(message);
+        webSocketInputCommandRouter.execute(webSocketInputCommand, session);
     }
 
 
