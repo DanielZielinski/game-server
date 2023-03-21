@@ -24,22 +24,30 @@ class PlayerSpawnImpl implements PlayerSpawn {
     public void spawn(WebSocketSession webSocketSession) {
         log.info("spawn new user in all existing clients");
         webSocketSessionManager.getAllSessions()
-                .forEach(session -> {
+                .forEach(sessionWrapper -> {
                             WebSocketOutputCommandPlayerSpawn spawnPlayerMessage = WebSocketOutputCommandPlayerSpawn.builder()
-                                    .data(OutputCommandPlayerSpawn.builder().sessionId(webSocketSession.getId()).build())
+                                    .data(OutputCommandPlayerSpawn.builder()
+                                            .sessionId(webSocketSession.getId())
+                                            .positionX(235)
+                                            .positionY(235)
+                                            .build())
                                     .actionName(PLAYER_SPAWN.name())
                                     .build();
-                            websocketMessageSender.send(session, spawnPlayerMessage);
+                            websocketMessageSender.send(sessionWrapper.getWebSocketSession(), spawnPlayerMessage);
                         }
                 );
 
         log.info("spawn all existing users in new client");
         webSocketSessionManager.getAllSessions()
                 .stream()
-                .filter(session -> !session.equals(webSocketSession))
-                .forEach(session -> {
+                .filter(sessionWrapper -> !sessionWrapper.getWebSocketSession().equals(webSocketSession))
+                .forEach(sessionWrapper -> {
                             WebSocketOutputCommandPlayerSpawn spawnPlayerMessage = WebSocketOutputCommandPlayerSpawn.builder()
-                                    .data(OutputCommandPlayerSpawn.builder().sessionId(session.getId()).build())
+                                    .data(OutputCommandPlayerSpawn.builder()
+                                            .sessionId(sessionWrapper.getWebSocketSession().getId())
+                                            .positionX(sessionWrapper.getLastPositionX())
+                                            .positionY(sessionWrapper.getLastPositionY())
+                                            .build())
                                     .actionName(PLAYER_SPAWN.name())
                                     .build();
                             websocketMessageSender.send(webSocketSession, spawnPlayerMessage);

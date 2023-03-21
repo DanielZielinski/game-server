@@ -7,5 +7,7 @@ import lombok.Data;
 @Data
 public class OutputCommandPlayerSpawn {
     private String sessionId;
+    private double positionX;
+    private double positionY;
 }
 

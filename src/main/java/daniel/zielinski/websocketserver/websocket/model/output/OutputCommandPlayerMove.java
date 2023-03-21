@@ -8,5 +8,6 @@ import lombok.Data;
 public class OutputCommandPlayerMove {
     private String sessionId;
     private String direction;
+    private double distance;
 }
 

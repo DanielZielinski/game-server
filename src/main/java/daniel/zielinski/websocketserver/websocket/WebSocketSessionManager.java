@@ -12,18 +12,27 @@ import java.util.List;
 @Service
 public class WebSocketSessionManager {
 
-    private final List<WebSocketSession> sessions = new ArrayList<>();
+    private final List<WebSocketSessionWrapper> sessions = new ArrayList<>();
 
     public void addSession(WebSocketSession session) {
-        sessions.add(session);
+        sessions.add(new WebSocketSessionWrapper(session));
     }
 
     public void removeSession(WebSocketSession session) {
-        sessions.remove(session);
+        sessions.removeIf(webSocketSessionWrapper ->
+                webSocketSessionWrapper.getWebSocketSession().equals(session));
     }
 
-    public List<WebSocketSession> getAllSessions() {
+    public List<WebSocketSessionWrapper> getAllSessions() {
         return sessions;
     }
+
+    public WebSocketSessionWrapper getSession(WebSocketSession session) {
+        return sessions.stream()
+                .filter(webSocketSessionWrapper -> webSocketSessionWrapper.getWebSocketSession().equals(session))
+                .findFirst()
+                .orElseThrow();
+    }
+
 }
 
