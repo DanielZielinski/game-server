@@ -2,7 +2,6 @@ package daniel.zielinski.websocketserver.websocket;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.web.socket.WebSocketSession;
 
 @Data
